@@ -17,12 +17,48 @@ package frc.robot;
  */
 public final class Constants {
     public static final class DriveConst{
-    public static final int FRONTRIGHT = 3;
-    public static final int FRONTLEFT = 2; 
-    public static final int BACKRIGHT = 0; 
-    public static final int BACKLEFT = 1; 
+    //usually 3 changed it 
+    public static final int FRONTRIGHT = 3;//4
+    public static final int FRONTLEFT = 2;//1
+    public static final int BACKRIGHT = 1; //2
+    public static final int BACKLEFT = 4;//3 
     public static final boolean gyroReversed = false;
+    public static final double wheelCircumference = 0.0;
+    }
 
+    public static final class LimelightConstants{
+        public static final double tapeheight = 38;//20
+        public static final double robotheight = 9;
+        public static final double angleoflimelight = 15;
+        //edit a2
+        /*
+        
+        */
+    }
+
+    public static final class DistanceConst{
+        public static final int sensorChannel = 1;
+        public static final double volts_to_dist= 1.0;
+        public static final double toInches = 0.125;
+    }
+
+    public static final class ShooterConst{
+        //should be reverted
+        public static final int SHOOTER = 4;
+        public static final double volts = 0.05;
+        public static final double voltsSecondsPerRotation = 12.0;
+    }
+
+    public static final class ColorSensorConst{
+        public static final int COLORMOTOR = 5;
+        public static final double FORWARDSPEED = 1.0;
+        public static final double BACKSPEED = 1.0;
+    }
+
+    public static final class ClimbConst{
+        public static final int motorOne = 6;
+        public static final int motorTwo = 7;
+        public static final int motorThree = 8;
     }
     
 }
