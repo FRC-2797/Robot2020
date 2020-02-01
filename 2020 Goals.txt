@@ -1,0 +1,90 @@
+Goals:
+
+Drivetrain(Mecanum)
+	Fast and working
+	able to strafe precisely
+	PRECISION and SPEED!
+
+	drivetrain in 2020 project
+		sparkmax
+		neo motors
+		encoder values
+		navx integrated
+		limelight integrated
+	auto drive in all directions by navx
+	auto yaw via navx
+	auto yaw via limelight for target
+	auto drive via limelight for distance
+
+	distance sensor integrate
+	auto drive via distance sensor
+
+
+Ball	
+	Vision locking onto the hex maybe inner if the team votes 
+	Upper(outer)
+		Stretch: Inner
+	Pickup(floor)
+	
+	integrate motorcontroller for ball intake
+	integrate motorcontroller for ball shooter
+	update limelight to see hexagonal target
+	get distance from target via limelight
+	get angle from limelight
+	test if limelight can see ball
+		test alternate vision processor (stretch)
+	
+	
+
+Hanging
+	is there a way to auto postion???
+	manuvering there
+	ways to hang
+	Balancing ??
+
+auto
+	Need to make plans on what to do during this period(Ball pickup ? Shooting? Bot placement prep for teleop)
+	
+
+Stretch Goal: Wheel
+	Spinning 3<=X<5
+		Encoders to read distance until desired point
+	Color Recognition
+		Taking in FMS message and going to desired color via color reader? Vision processing? 
+
+
+Motors
+		
+
+Motor Controllers
+	Sparkmax
+	Falcon 
+	Victors
+
+Sensors
+
+	Color 
+	Distance 
+	Limelight
+		
+	encoders
+	webcam
+	navx
+	limit switches 	
+
+Actions
+	Drive
+	driving auto 
+	picking up ball
+	shooting ball
+	extending hanger
+	pull-up hanger
+	Down hanger
+	engage spinner
+	Spin the wheel 
+	View the wheel 
+	
+Controls
+	d-pad strafe 
+	sticks drive 
+	
