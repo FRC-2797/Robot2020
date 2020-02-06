@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANEncoder;
@@ -8,14 +7,10 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.hal.sim.mockdata.DriverStationDataJNI;
-import edu.wpi.first.wpilibj.CAN;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.MecanumDriveMotorVoltages;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConst;
 
@@ -25,11 +20,11 @@ public class Drivetrain extends SubsystemBase{
     //MecanumDriveOdometry odometry = new MecanumDriveOdometry(, getAngle());
 
     /*
-    private final TalonFX frontRight = new TalonFX(0);
-    private final TalonFX frontLeft = new TalonFX(1);
-    private final TalonFX backRight = new TalonFX(2);
-    private final TalonFX backLeft = new TalonFX(3);
-    */
+    private final TalonFX frontRightTalon = new TalonFX(0);
+    private final TalonFX frontLeftTalon = new TalonFX(1);
+    private final TalonFX backRightTalon = new TalonFX(2);
+    private final TalonFX backLeftTalon = new TalonFX(3);
+    
 
 
     private final CANSparkMax frontright = new CANSparkMax(DriveConst.FRONTRIGHT, MotorType.kBrushless);
@@ -51,7 +46,7 @@ public class Drivetrain extends SubsystemBase{
     private final SpeedControllerGroup rightSC = new SpeedControllerGroup(frontleftV, backleftV);
 
     public final DifferentialDrive drivetrainD = new DifferentialDrive(leftSC, rightSC);
-    */
+    
     
     private final CANEncoder frontLeftENC = new CANEncoder(frontleft);
     private final CANEncoder frontRightENC = new CANEncoder(frontright);
@@ -61,8 +56,13 @@ public class Drivetrain extends SubsystemBase{
     
     @Override
     public void periodic(){
-        double velocity = frontLeftENC.getVelocity();
-        SmartDashboard.putNumber("velocity", velocity);
+        double velocityFL = frontLeftENC.getVelocity();
+        double velocityBL = backLeftENC.getVelocity();
+        double velocityFR = frontRightENC.getVelocity();
+        double velocityBR = backRightENC.getVelocity();
+        
+        System.out.println("Front Left: " + velocityFL + " Front Right: " + velocityFR + " Back Left:" + velocityBL + " Back Right: " + velocityBR);
+        //SmartDashboard.putNumber("velocity", velocity);
     }
 
     
@@ -71,7 +71,7 @@ public class Drivetrain extends SubsystemBase{
     SpeedController frontLeftSC = new SpeedController(backright);
     SpeedController backRightSC = new SpeedController(backleft);
     SpeedController backLeftSC = new SpeedController(frontright);
-    */
+    
 
     public final MecanumDrive drivetrain = new MecanumDrive(frontleft, backleft, frontright, backright);
 
@@ -92,7 +92,7 @@ public class Drivetrain extends SubsystemBase{
     public void arcadeDrive(double fwd, double rot){
         drivetrainD.arcadeDrive(fwd, rot);
     }
-    */
+    
     
     public void setMaxOutput(double maxOutput){
         drivetrain.setMaxOutput(maxOutput);
@@ -130,4 +130,5 @@ public class Drivetrain extends SubsystemBase{
     public CANSparkMax getBackRight(){
         return backright;
     }
+    */
 }

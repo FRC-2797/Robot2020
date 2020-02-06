@@ -6,7 +6,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.subsystems.Drivetrain;
 
 public class Limelight extends SubsystemBase{
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -24,8 +23,8 @@ public class Limelight extends SubsystemBase{
         NetworkTableEntry ts = table.getEntry("ts");
         NetworkTableEntry tv = table.getEntry("tv");
 
-        x = tx.getDouble(0.0);       
-        System.out.println(x);
+        x = tx.getDouble(0);       
+        //System.out.println("limelight x value " + x);
         y = ty.getDouble(0.0);
         distance = (37.5  -7) / Math.tan(Math.toRadians(15 + y));
 

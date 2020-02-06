@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DistanceConst;
 
 public class Ultrasonic extends SubsystemBase{
+    /*
     
     private static final AnalogInput distanceSensor = new AnalogInput(DistanceConst.sensorChannel);
 
@@ -27,5 +28,5 @@ public class Ultrasonic extends SubsystemBase{
 
         SmartDashboard.putNumber("Distance", currentDistance);
     }
-    
+    */
 }

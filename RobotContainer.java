@@ -10,12 +10,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
-import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -31,13 +29,15 @@ import frc.robot.subsystems.Ultrasonic;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-
+  boolean pressed = false;
   private final Drivetrain drivetrain = new Drivetrain();
   XboxController xbx = new XboxController(0);
   private final Limelight limelight = new Limelight();
   private final Shooter shooter = new Shooter();
   private final Ultrasonic distanceSensor = new Ultrasonic();
-  //private final ColorSensor colorsensor = new ColorSensor();  
+  //private final TurnToAngle angle = new TurnToAngle(drivetrain);
+  private final ColorSensor colorsensor = new ColorSensor();
+  private final Button rightTrigger = new Button();
 
   
   
@@ -49,14 +49,16 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    
-
+    /*
     drivetrain.setDefaultCommand(
       new RunCommand(() -> drivetrain.drive(
-        xbx.getY(GenericHID.Hand.kLeft) > 0.1?xbx.getY(GenericHID.Hand.kLeft):xbx.getY(GenericHID.Hand.kLeft)< -0.1?xbx.getY(GenericHID.Hand.kLeft):0,
+        xbx.getY(GenericHID.Hand.kLeft) > 0.3?xbx.getY(GenericHID.Hand.kLeft):xbx.getY(GenericHID.Hand.kLeft)< -0.3?xbx.getY(GenericHID.Hand.kLeft):0,
         (xbx.getPOV() == -1)?0:((xbx.getPOV() == 90 )?0.5:-0.5),
-        xbx.getX(GenericHID.Hand.kRight) > 0.1?xbx.getX(GenericHID.Hand.kRight):xbx.getX(GenericHID.Hand.kRight)<-0.1?xbx.getX(GenericHID.Hand.kRight):0, false),drivetrain));
-  
+        xbx.getX(GenericHID.Hand.kRight) > 0.3?xbx.getX(GenericHID.Hand.kRight):xbx.getX(GenericHID.Hand.kRight)<-0.3?xbx.getX(GenericHID.Hand.kRight):0, false),drivetrain));
+    */
+    shooter.setDefaultCommand(
+      new RunCommand(() -> shooter.shoot(true,xbx.getRawAxis(3)),shooter));
+
     /*
     drivetrain.setDefaultCommand(
       newRunCommand(() -> drivetrain.arcadeDrive(
@@ -73,6 +75,14 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    //new Button(() -> shooter.shoot(true, 1));
+    
+
+
+    /*
+    new RunCommand(() -> shooter.shoot(
+        xbx.getTriggerAxis(GenericHID.Hand.kRight) >0.5, 1.0),shooter);
     
     
     new JoystickButton(xbx, Button.kBumperRight.value)
@@ -80,34 +90,29 @@ public class RobotContainer {
         .whenReleased(() -> drivetrain.setMaxOutput(1));
 
        
-    //Have to use an encoder, not sure how just yet.
+    /*Have to use an encoder, not sure how just yet.
     new JoystickButton(xbx, Button.kA.value).whenHeld(new PIDCommand(
       new PIDController(0.065 ,0.001, 0.0), 
       drivetrain::getHeading,
       limelight.getX(), 
       output -> drivetrain.drive(0, Limelight.x, 0, false), //drivetrain.drive(0, Limelight.distance, 0, false),
       drivetrain));
-
     
+
+
     new JoystickButton(xbx, Button.kY.value).whenHeld(new PIDCommand(
-      new PIDController(0.00203125, 0.0025 , 0.5), 
+      new PIDController(0.0,/*0.002031250.0,/* 0.0,025 0.00.0 /*0.50.0), 
 
       drivetrain::getHeading,
 
-      limelight.getX(), 
+      0.0, 
 
       output -> drivetrain.drive(0, 0, limelight.getX(), false),
 
       drivetrain
     ));
 
-    new JoystickButton(xbx, Axis.kRightTrigger.value)
-        .whenActive(() -> shooter.shoot(.5))
-        .whenInactive(() -> shooter.stop());
-    
-    new JoystickButton(xbx, Button.kB.value)
-        .whenPressed(() -> shooter.shoot(-.5))
-        .whenReleased(() -> shooter.stop());
+    //new JoystickButton(xbx, Button.kB.value).whenHeld(new TurnToAngle(drivetrain));
 }
 
   /**
@@ -120,4 +125,5 @@ public class RobotContainer {
     return m_autoCommand;
   }
   */
+}
 }
