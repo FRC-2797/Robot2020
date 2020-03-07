@@ -19,8 +19,8 @@ public final class Constants {
     public static final class DriveConst{
     //usually 3 changed it 
     public static final int FRONTRIGHT = 4;//4
-    public static final int FRONTLEFT = 3;//1
-    public static final int BACKRIGHT = 2; //2
+    public static final int FRONTLEFT = 2;//1
+    public static final int BACKRIGHT = 3; //2
     public static final int BACKLEFT = 1;//3 
     public static final boolean gyroReversed = false;
     public static final double wheelCircumference = 18.84 ;
@@ -56,8 +56,8 @@ public final class Constants {
     }
 
     public static final class ClimbConst{
-        public static final int motorOne = 6;
-        public static final int motorTwo = 7;
+        public static final int motorOne = 0;
+        public static final int motorTwo = 1;
         public static final int motorThree = 8;
     }
     

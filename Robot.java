@@ -7,9 +7,17 @@
 
 package frc.robot;
 
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.DriveDistance;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,20 +25,50 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
+
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  private DriveDistance autoDrive;
 
   private RobotContainer robotContainer;
+
+  SendableChooser chooser = new SendableChooser<Object>();
 
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
-  public void robotInit() {
+  public void robotInit(){
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+    //shooter thing up
+    chooser.addOption("Ball Shoot", );
+    chooser.addOption("Ball Pickup", robotContainer.intakeGroup);
+    //robotContainer.shooter.
+    robotContainer.distanceGroup.getTeam();
+    robotContainer.distanceGroup.setStarting();
+    robotContainer.drivetrain.calibrate();
+
+    new Thread(() -> {
+      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+      camera.setResolution(640, 480);
+
+      CvSink cvSink = CameraServer.getInstance().getVideo();
+      CvSource outputStream = CameraServer.getInstance().putVideo("Vidoe", 640, 480);
+
+      Mat source = new Mat();
+      Mat output = new Mat();
+      
+      while(!Thread.interrupted()){
+        if(cvSink.grabFrame(source) == 0){
+          continue;
+        }
+        Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+        outputStream.putFrame(output);
+      }
+    }).start();
+    //raise the window motor here 
 
     //table = NetworkTableInstance.getDefault().getTable("limelight");
   }
@@ -62,19 +100,21 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
   }
 
-  /**
-   * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+  
+   //This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
    
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+    
     // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
+    if (autoDrive != null) {
+      autoDrive.schedule();
+    }
+    if(chooser.getSelected()){
+
     }
   }
-  */
+
 
   /**
    * This function is called periodically during autonomous.
@@ -89,8 +129,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+    if (autoDrive != null) {
+      //autoDrive.cancel();
     }
   }
 
@@ -114,4 +154,5 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
+
 }

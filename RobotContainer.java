@@ -9,16 +9,21 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.DistanceSpin;
+import frc.robot.commands.DriveDistance;
+import frc.robot.commands.Intake;
+import frc.robot.commands.ShootGroup;
+import frc.robot.commands.TurnToAngleProfiled;
+import frc.robot.commands.WheelSpin;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.ColorSensor;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Ultrasonic;
-
 
 
 /**
@@ -30,15 +35,16 @@ import frc.robot.subsystems.Ultrasonic;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   boolean pressed = false;
-  private final Drivetrain drivetrain = new Drivetrain();
-  XboxController xbx = new XboxController(0);
-  private final Limelight limelight = new Limelight();
-  private final Shooter shooter = new Shooter();
-  private final Ultrasonic distanceSensor = new Ultrasonic();
-  //private final TurnToAngle angle = new TurnToAngle(drivetrain);
-  private final ColorSensor colorsensor = new ColorSensor();
-  private final Button rightTrigger = new Button();
-
+  public final Climb climb = new Climb();
+  public static final Drivetrain drivetrain = new Drivetrain();
+  public static XboxController xbx = new XboxController(0);
+  public static final Limelight limelight = new Limelight();
+  public static final Shooter shooter = new Shooter();
+  public static final DriveDistance drivedist = new DriveDistance();
+  public static TurnToAngleProfiled profiledTurn;
+  public static final ColorSensor colorsensor = new ColorSensor();
+  public static final ShootGroup distanceGroup = new ShootGroup(drivetrain, limelight, drivedist,shooter);
+  public static final Intake intakeGroup = new Intake(shooter);
   
   
 
@@ -46,26 +52,16 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   @SuppressWarnings("PMD.ExcessiveImports")
-  public RobotContainer() {
+  public RobotContainer(){
     // Configure the button bindings
     configureButtonBindings();
-    /*
+    //shooter.setDefaultCommand(new RunCommand() -> shooter.shoot);
+    
     drivetrain.setDefaultCommand(
       new RunCommand(() -> drivetrain.drive(
-        xbx.getY(GenericHID.Hand.kLeft) > 0.3?xbx.getY(GenericHID.Hand.kLeft):xbx.getY(GenericHID.Hand.kLeft)< -0.3?xbx.getY(GenericHID.Hand.kLeft):0,
         (xbx.getPOV() == -1)?0:((xbx.getPOV() == 90 )?0.5:-0.5),
+        -(xbx.getY(GenericHID.Hand.kLeft) > 0.3?xbx.getY(GenericHID.Hand.kLeft):xbx.getY(GenericHID.Hand.kLeft)< -0.3?xbx.getY(GenericHID.Hand.kLeft):0),
         xbx.getX(GenericHID.Hand.kRight) > 0.3?xbx.getX(GenericHID.Hand.kRight):xbx.getX(GenericHID.Hand.kRight)<-0.3?xbx.getX(GenericHID.Hand.kRight):0, false),drivetrain));
-    */
-    shooter.setDefaultCommand(
-      new RunCommand(() -> shooter.shoot(true,xbx.getRawAxis(3)),shooter));
-
-    /*
-    drivetrain.setDefaultCommand(
-      newRunCommand(() -> drivetrain.arcadeDrive(
-        xbx.getY(GenericHID.Hand.kleft) > 0.1?xbx.getY(GenericHID.Hand.kLeft):xbx.getY(GenericHID.Hand.kLeft)<-0.1?xbx.getY(GenericHID.Hand.k)
-      ));
-    
-       */
   }
 
   /**
@@ -76,32 +72,42 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
-    //new Button(() -> shooter.shoot(true, 1));
-    
+    new JoystickButton(xbx, Button.kX.value).whileHeld(() -> colorsensor.distanceSpin()).whenReleased(() -> colorsensor.stop());
 
+    new JoystickButton(xbx, Button.kB.value).whenPressed(() -> drivetrain.calibrate());
+
+    new JoystickButton(xbx, Button.kA.value).whenPressed((new SequentialCommandGroup(new DistanceSpin(colorsensor), new WheelSpin(colorsensor))));
+    //new JoystickButton(xbx, Button.kA.value).whenPressed(() -> drivetrain.resetSensor());
+
+    //new JoystickButton(xbx,Button.kBumperLeft.value).whenPressed(() -> testing.talonTesting()).whenReleased(() -> testing.stop());
+
+    //new JoystickButton(xbx, Button.kB.value).whenPressed(() -> climb.go());
+    
+    //new JoystickButton(xbx, Button.kB.value).whenHeld(new TurnToAngle(drivetrain));
+
+    //new JoystickButton(xbx, Button.kA.value).whenPressed(() -> drivetrain.zeroHeading());
+    //144381
+    //new JoystickButton(xbx, Button.kX.value).whenPressed(() -> drivedist.driveDistanceFWD(144500, drivetrain)).whenReleased(() -> drivetrain.stop(drivetrain));
+    //new JoystickButton(xbx, Button.kY.value).whenPressed(() -> drivetrain.playSong());
+    //new JoystickButton(xbx, Button.kY.value).whenPressed(() -> shooter.shoot(1)).whenReleased(() -> shooter.stop());
+    
+    /*
+    new JoystickButton(xbx, 6)
+        .whenPressed(() -> drivetrain.setMaxOutput(0.2))
+        .whenReleased(() -> drivetrain.setMaxOutput(.5));
 
     /*
-    new RunCommand(() -> shooter.shoot(
-        xbx.getTriggerAxis(GenericHID.Hand.kRight) >0.5, 1.0),shooter);
-    
-    
-    new JoystickButton(xbx, Button.kBumperRight.value)
-        .whenPressed(() -> drivetrain.setMaxOutput(0.2))
-        .whenReleased(() -> drivetrain.setMaxOutput(1));
-
-       
-    /*Have to use an encoder, not sure how just yet.
-    new JoystickButton(xbx, Button.kA.value).whenHeld(new PIDCommand(
-      new PIDController(0.065 ,0.001, 0.0), 
+    new JoystickButton(xbx, Button.kX.value).whenPressed(new PIDCommand(
+      new PIDController(0.5,0.0, 0.0), 
       drivetrain::getHeading,
       limelight.getX(), 
-      output -> drivetrain.drive(0, Limelight.x, 0, false), //drivetrain.drive(0, Limelight.distance, 0, false),
+      output -> drivetrain.drive(0, 0, output, false), //drivetrain.drive(0, Limelight.distance, 0, false),
       drivetrain));
     
 
-
+    /*
     new JoystickButton(xbx, Button.kY.value).whenHeld(new PIDCommand(
-      new PIDController(0.0,/*0.002031250.0,/* 0.0,025 0.00.0 /*0.50.0), 
+      new PIDController(0.0, 0.0, 0.0), 
 
       drivetrain::getHeading,
 
@@ -119,11 +125,10 @@ public class RobotContainer {
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
-   
+   */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    // Logic to determine which auto command to run
   }
-  */
-}
+  }
+
 }
