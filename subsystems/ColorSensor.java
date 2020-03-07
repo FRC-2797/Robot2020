@@ -1,8 +1,6 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorSensorV3.RawColor;
 
@@ -17,16 +15,11 @@ import frc.robot.Constants.ColorSensorConst;
 public class ColorSensor extends SubsystemBase{
     
     private final I2C.Port i2cPort = I2C.Port.kOnboard;
+    
+    private final WPI_VictorSPX arm = new WPI_VictorSPX(0);
 
     
-    //private final WPI_VictorSPX arm = new WPI_VictorSPX(ColorSensorConst.COLORMOTOR);
     
-    
-
-    private final CANSparkMax arm = new CANSparkMax(ColorSensorConst.COLORMOTOR, MotorType.kBrushless);
-
-    private final CANEncoder wheelEncoder = new CANEncoder(arm);
-
     String gameData;
 
     double data;
@@ -45,31 +38,42 @@ public class ColorSensor extends SubsystemBase{
 
     boolean red, blue, green, yellow = false;
 
-    double circle = 12;
-
     double distance;
 
-    double initPos;
+    String goalPos;
 
-    double goalPos;
-    
+    Object [][] colorwheel = new Object[8][4];
+
+    String initPos;
+
+    //double  redCount, blueCount, yellowCount, greenCount, redCount2, blueCount2, yellowCount2, greenCount2, redCount3, blueCount3, yellowCount3, greenCount3, redCount4, blueCount4, yellowCount4, greenCount4;
+
+
+    boolean started;
+
+    boolean off;
+
+    String initColor;
+
+    boolean isEnabled;
+
+    //Trigger trigger = new Trigger(colorsensor::getEnabled);
+
     @Override
     public void periodic(){
-        
+
+        readColor();
 
         detectedColor = colorsensor.getColor();
-
-
+ 
         colorsensor.getRawColor();
-
+        
         IR = colorsensor.getIR();
 
         SmartDashboard.putNumber("Red", detectedColor.red);
         SmartDashboard.putNumber("Green", detectedColor.green);
         SmartDashboard.putNumber("Blue", detectedColor.blue);
-        SmartDashboard.putNumber("Raw Color blue", rawColor.blue);
-        SmartDashboard.putNumber("Raw Color red", rawColor.red);
-        SmartDashboard.putNumber("Raw Color green", rawColor.green);
+
         
         SmartDashboard.putNumber("IR", IR);
 
@@ -78,25 +82,32 @@ public class ColorSensor extends SubsystemBase{
         SmartDashboard.putNumber("Proximity", proximity);
 
         gameData = DriverStation.getInstance().getGameSpecificMessage();
-        
 
+        gameData = "B";
+        
+        }
+
+    public void run(){
+        System.out.println("Runninig");
         gameData = "B";
         if(gameData.length()> 0){
             switch (gameData.charAt(0)){
                 case 'B':
+                    System.out.println("In B");
                     blue = true;
+                    goalPos = "blue";
                     SmartDashboard.putBoolean("Blue", blue);
                     readColor();
-                    if(color.equals("Red")){
-                        goalPos = 24;
+                    if(color.equals("red")){
+                        //goalPos = 24;
                         colorSpin();
                     }
-                    else if(color.equals("Green")){
-                        goalPos = 37.5;
+                    else if(color.equals("green")){
+                        //goalPos = 37.5;
                         colorSpin();
                     }
-                    else if(color.equals("Yellow")){
-                        goalPos = 12.5;
+                    else if(color.equals("yellow")){
+                        //goalPos = 12.5;
                         colorSpin();
                     }
                     else{
@@ -104,19 +115,20 @@ public class ColorSensor extends SubsystemBase{
                     }
                     break;
                 case 'G':
+                    goalPos = "green";
                     green = true;
                     SmartDashboard.putBoolean("Green", green);
                     readColor();
-                    if(color.equals("Red")){
-                        goalPos = 37.5;
+                    if(color.equals("red")){
+                        //goalPos = 37.5;
                         colorSpin();
                     }
-                    else if(color.equals("Blue")){
-                        goalPos = 12.5;
+                    else if(color.equals("blue")){
+                        //goalPos = 12.5;
                         colorSpin();
                     }
-                    else if(color.equals("Yellow")){
-                        goalPos = 24;
+                    else if(color.equals("yellow")){
+                        //goalPos = 24;
                         colorSpin();
                     }
                     else{
@@ -125,18 +137,19 @@ public class ColorSensor extends SubsystemBase{
                     break;
                 case 'R':
                     red = true;
+                    goalPos = "red";
                     SmartDashboard.putBoolean("Red", red);
                     readColor();
-                    if(color.equals("Blue")){
-                        goalPos = 24;
+                    if(color.equals("blue")){
+                        //goalPos = 24;
                         colorSpin();
                     }
-                    else if(color.equals("Green")){
-                        goalPos = 12.5;
+                    else if(color.equals("green")){
+                        //goalPos = 12.5;
                         colorSpin();
                     }
-                    else if(color.equals("Yellow")){
-                        goalPos = 37.5;
+                    else if(color.equals("yellow")){
+                        //goalPos = 37.5;
                         colorSpin();
                     }
                     else{
@@ -146,18 +159,19 @@ public class ColorSensor extends SubsystemBase{
                     break;
                 case 'Y':
                     yellow = true;
+                    goalPos = "yellow";
                     SmartDashboard.putBoolean("Yellow", yellow);
                     readColor();
-                    if(color.equals("Red")){
-                        goalPos = 12.5;
+                    if(color.equals("red")){
+                        //goalPos = 12.5;
                         colorSpin();
                     }
-                    else if(color.equals("Blue")){
-                        goalPos = 37.5;
+                    else if(color.equals("blue")){
+                        //goalPos = 37.5;
                         colorSpin();
                     }
-                    else if(color.equals("Green")){
-                        goalPos = 24;
+                    else if(color.equals("green")){
+                        //goalPos = 24;
                         colorSpin();
                     }
                     else{
@@ -172,41 +186,77 @@ public class ColorSensor extends SubsystemBase{
 
     }
 
-    public double readColor(){
+    public void distanceSpin(){
+        readColor();
+        String target = color;
+        
+        int colorCount = 0;
+        boolean onTarget = true;
+        boolean offTarget = false;
+        do{
+            readColor();
+            //System.out.println(target + " " + onTarget);
+            spin();
+            if(color.equals(target) && onTarget){
+                System.out.println(target);
+                //System.out.println("If target color" + target);
+                colorCount++; 
+                System.out.println(colorCount);
+                onTarget = false;
+                offTarget = true;
+            }
+            else if(!color.equals(target) && offTarget){
+                System.out.println("In Else");
+                onTarget = true;
+                offTarget = false;
+            }
+        }while(colorCount < 8);
+            //isEnabled = false;
+            colorCount = 0;
+            System.out.println("Hello i am under the water please help me");
+            stop();
+        }
+       
+
+
+
+    public void readColor(){
         detectedColor = colorsensor.getColor();
-         //need to read the values and then do something with them after 
-
-         if(detectedColor.red > .4 && detectedColor.blue < .16 && detectedColor.green < .37){
-             System.out.println("Red");
-             color = "red";
-             return detectedColor.red;
+         //need to read the values and then do something with them after
+        if(detectedColor.red > .4 && detectedColor.blue < .16 && detectedColor.green < .37){
+            //System.out.println("Red");
+            color = "red";
+            //isEnabled = true;
+        }
+        else if(detectedColor.green > .5 && detectedColor.red < .2 && detectedColor.blue < .27){
+            //System.out.println("Green");
+            color = "green";
+            //isEnabled = true;
+        }
+        else if(detectedColor.blue > .4 && detectedColor.green > .4){
+            //System.out.println("blue");
+            color = "blue";
+            //isEnabled = true;
+        }
+        else{
+            //System.out.println("yellow");
+            color = "yellow";
+            //isEnabled = true;
          }
-         else if(detectedColor.green > .5 && detectedColor.red < .2 && detectedColor.blue < .27){
-             System.out.println("Green");
-             color = "green";
-             return detectedColor.green;
-         }
-         else if(detectedColor.blue > .4 && detectedColor.green > .4){
-             System.out.println("blue");
-             color = "blue";
-             return detectedColor.blue;
-         }
-         else{
-             System.out.print("yellow");
-             color = "yellow";
-             return 0.0;
-         }
-
-
     }
     
+
     public void colorSpin(){
-        //fix the init pos thing
-        initPos = wheelEncoder.getPosition();
-        while(initPos <= goalPos){
-            spin();
+        while(!(color.equals(goalPos))){
+            readColor();
+            if(!(color.equals(goalPos))){
+                spin();
+            }
+            else{
+                stop();
+            }
         }
-        stop();
+        
     }
 
     public void spin(){
